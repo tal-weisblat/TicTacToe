@@ -3,9 +3,17 @@
 # new version of TikTacToe 
 
 
+# TODO :
+# - add computer-player
+# - adjust board-functionality to be affected by computer-player
+# - modify Button-class so 'O' would be printed whenever computer-player made his move  
+
+
 import pygame 
 import os 
+import random
 import time 
+
 pygame.init()
 
 
@@ -25,11 +33,11 @@ WIN.fill(WHITE)
 
 
 # SOUNDS 
-pygame.mixer.music.load(os.path.join('soundfiles', 'background_music.mp3'))    
+pygame.mixer.music.load(os.path.join('sounds', 'background_music.mp3'))    
 pygame.mixer.music.play()
-WIN_SOUND  = pygame.mixer.Sound(os.path.join('soundfiles', 'win_sound.wav'))
-LOST_SOUND = pygame.mixer.Sound(os.path.join('soundfiles', 'lost_sound.wav'))
-
+WIN_SOUND   = pygame.mixer.Sound(os.path.join('sounds', 'win_sound.wav'))
+LOST_SOUND  = pygame.mixer.Sound(os.path.join('sounds', 'lost_sound.wav'))
+CLICK_SOUND = pygame.mixer.Sound(os.path.join('sounds', 'click_sound.mp3')) 
 
 # FONTS
 X_SIZE = 100 
@@ -42,6 +50,8 @@ FONT_O = pygame.font.SysFont('comicsans', O_SIZE)
 BUTTON_WIDTH  = 120
 BUTTON_HEIGHT = 120
 BUTTONS_GAP   = 5
+
+
 
 
 
@@ -108,11 +118,13 @@ BUTTON_6_X = pygame.USEREVENT + 6
 BUTTON_7_X = pygame.USEREVENT + 7
 BUTTON_8_X = pygame.USEREVENT + 8
 BUTTON_9_X = pygame.USEREVENT + 9
+GAME_OVER  = pygame.USEREVENT + 10
+COMPUTER_TURN = pygame.USEREVENT + 11 
 
 
 
 # DRAW ALL 
-def draw():
+def draw_board():
     button_1.draw()
     button_2.draw()
     button_3.draw()
@@ -126,8 +138,74 @@ def draw():
 
 
 
+def check_results(board): 
+    if  (((board[0] == board[1] == board[2]) and (board[2] != '')) or\
+         ((board[3] == board[4] == board[5]) and (board[5] != '')) or\
+         ((board[6] == board[7] == board[8]) and (board[8] != ''))):
+            
+            print('WON')      
+            WIN_SOUND.play()
+            time.sleep(1)
+            pygame.event.post(pygame.event.Event(GAME_OVER))
+
+    elif ((board[0] == board[3] == board[6]) and (board[6] != '')) or\
+         ((board[1] == board[4] == board[7]) and (board[7] != '')) or\
+         ((board[2] == board[5] == board[8]) and (board[8] != '')):
+            
+            print('WON')      
+            WIN_SOUND.play()
+            time.sleep(1)
+            pygame.event.post(pygame.event.Event(GAME_OVER))
+
+    elif ((board[0] == board[4] == board[8]) and (board[8] != '')) or\
+         ((board[2] == board[4] == board[6]) and (board[6] != '')):
+            
+            print('WON')      
+            WIN_SOUND.play()
+            time.sleep(1)
+            pygame.event.post(pygame.event.Event(GAME_OVER))
+
+    # TIE:
+    # elif ( (board[0] != ' ') and (board[1] != ' ') and (board[2] != ' ') and
+    #        (board[3] != ' ') and (board[4] != ' ') and (board[5] != ' ') and
+    #        (board[6] != ' ') and (board[7] != ' ') and (board[8] != ' ')) :   
+    #         print('TIE')
+
+    
+
+
+def computer_turn(board):
+    
+    time.sleep(0.45)
+
+    # computer-choice 
+    i = random.randint(0,8)
+    while board[i] != '': i = random.randint(0,8)
+    
+    # address-board 
+    board[i] = 'O' 
+
+    # address gui (with computer choice)
+    if i == 0: button_1.buttonSign = 'O'
+    if i == 1: button_2.buttonSign = 'O'
+    if i == 2: button_3.buttonSign = 'O'
+    if i == 3: button_4.buttonSign = 'O'
+    if i == 4: button_5.buttonSign = 'O'
+    if i == 5: button_6.buttonSign = 'O'
+    if i == 6: button_7.buttonSign = 'O'
+    if i == 7: button_8.buttonSign = 'O'
+    if i == 8: button_9.buttonSign = 'O'
+    
+    
+
+
+
+
+
+
 def game():
 
+    mouse_clicked = False 
     board = ['','','','','','','','','']
     clock = pygame.time.Clock()         
     run   = True 
@@ -138,19 +216,76 @@ def game():
         clock.tick(60) 
         for event in pygame.event.get():    
             
+
+            # GAME-OVER
+            if event.type == GAME_OVER:
+                run = False
+                
+
             # QUIT-GAME
             if event.type == pygame.QUIT: run = False   
 
+
+            # COMPUTER-TURN 
+            if (event.type == COMPUTER_TURN):
+                computer_turn(board)
+                check_results(board)
+
+
             # HUMAN-CLICKED-BUTTONS 
-            if event.type == BUTTON_1_X: board[0] = 'X'
-            if event.type == BUTTON_2_X: board[1] = 'X'
-            if event.type == BUTTON_3_X: board[2] = 'X'
-            if event.type == BUTTON_4_X: board[3] = 'X'
-            if event.type == BUTTON_5_X: board[4] = 'X'
-            if event.type == BUTTON_6_X: board[5] = 'X'
-            if event.type == BUTTON_7_X: board[6] = 'X'
-            if event.type == BUTTON_8_X: board[7] = 'X'
-            if event.type == BUTTON_9_X: board[8] = 'X'
+            if (event.type == BUTTON_1_X) and (mouse_clicked == False):  
+                mouse_clicked = True
+                board[0] = 'X'
+                check_results(board)
+                pygame.event.post(pygame.event.Event(COMPUTER_TURN))
+                
+            if (event.type == BUTTON_2_X) and (mouse_clicked == False):  
+                mouse_clicked = True
+                board[1] = 'X'
+                check_results(board)
+                pygame.event.post(pygame.event.Event(COMPUTER_TURN))
+
+            if (event.type == BUTTON_3_X) and (mouse_clicked == False): 
+                mouse_clicked = True
+                board[2] = 'X'
+                check_results(board)
+                pygame.event.post(pygame.event.Event(COMPUTER_TURN))
+
+            if (event.type == BUTTON_4_X) and (mouse_clicked == False): 
+                mouse_clicked = True
+                board[3] = 'X'
+                check_results(board)
+                pygame.event.post(pygame.event.Event(COMPUTER_TURN))
+
+            if (event.type == BUTTON_5_X) and (mouse_clicked == False): 
+                mouse_clicked = True
+                board[4] = 'X'
+                check_results(board)
+                pygame.event.post(pygame.event.Event(COMPUTER_TURN))
+
+            if (event.type == BUTTON_6_X) and (mouse_clicked == False): 
+                mouse_clicked = True
+                board[5] = 'X'
+                check_results(board)
+                pygame.event.post(pygame.event.Event(COMPUTER_TURN))
+
+            if (event.type == BUTTON_7_X) and (mouse_clicked == False): 
+                mouse_clicked = True
+                board[6] = 'X'
+                check_results(board)
+                pygame.event.post(pygame.event.Event(COMPUTER_TURN))
+
+            if (event.type == BUTTON_8_X) and (mouse_clicked == False): 
+                mouse_clicked = True
+                board[7] = 'X'
+                check_results(board)
+                pygame.event.post(pygame.event.Event(COMPUTER_TURN))
+
+            if (event.type == BUTTON_9_X) and (mouse_clicked == False): 
+                mouse_clicked = True
+                board[8] = 'X'
+                check_results(board)
+                pygame.event.post(pygame.event.Event(COMPUTER_TURN))
 
             
         # BUTTON-ClICKED
@@ -166,11 +301,11 @@ def game():
         button_9.humanPressed(pos, BUTTON_9_X)
         
 
-        print(board)
         
 
-        # DRAW-ALL 
-        draw()
+        if (pygame.mouse.get_pressed()[0] == 0): mouse_clicked = False 
+        print(board)
+        draw_board()
 
 
 
