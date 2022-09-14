@@ -4,8 +4,15 @@
 
 
 # TODO :
-# - add AI-player
-# at the end of the game add the option for a new-game (or quit-game)
+# add AI-player
+# add a new/quit game gui at the end of a game 
+# add new FONTS for new/quit-game button + quistion 
+# create functionality for both Yes and No buttons
+
+
+# restrict human-player from checking non-empty buttons (at this current version it's possible)
+# add Tie option 
+
 
 
 
@@ -29,6 +36,19 @@ WIN_HEIGHT = 450
 pygame.display.set_caption('TicTacToe')                            # title 
 WIN = pygame.display.set_mode((WIN_WIDTH,WIN_HEIGHT))     # game window (width & height)
 WIN.fill(WHITE)
+
+
+# FONT
+GAME_OVER_FONT  = pygame.font.SysFont('comicsans', 40) 
+YES_NO_FONT     = pygame.font.SysFont('comicsans', 25)
+
+# RENDER
+gameOver_text = GAME_OVER_FONT.render('Game over',1, RED)    
+yes_text      = YES_NO_FONT.render('Yes', 1, BLACK)
+no_text       = YES_NO_FONT.render('No',1, BLACK)    
+
+
+
 
 
 # SOUNDS 
@@ -121,7 +141,8 @@ COMPUTER_TURN = pygame.USEREVENT + 11
 
 
 # DRAW ALL 
-def draw_board():
+def draw_game_board():
+    WIN.fill(WHITE)
     button_1.draw()
     button_2.draw()
     button_3.draw()
@@ -196,17 +217,31 @@ def computer_turn(board):
     
 
 
+def initiate_buttons():
+    button_1.buttonSign = None
+    button_2.buttonSign = None
+    button_3.buttonSign = None
+    button_4.buttonSign = None
+    button_5.buttonSign = None
+    button_6.buttonSign = None
+    button_7.buttonSign = None
+    button_8.buttonSign = None
+    button_9.buttonSign = None
+
+
 
 
 
 
 def game():
-
+    
     mouse_clicked = False 
     board = ['','','','','','','','','']
     clock = pygame.time.Clock()         
+    game_over = False 
     run   = True 
-    
+
+
 
     while run:
 
@@ -215,17 +250,20 @@ def game():
             
 
             # GAME-OVER
-            if event.type == GAME_OVER: run = False
-                
+            if (event.type == GAME_OVER):
+                game_over = True 
+            
+
+
 
             # QUIT-GAME
             if event.type == pygame.QUIT: run = False   
 
 
             # COMPUTER-TURN 
-            if (event.type == COMPUTER_TURN) and (run == True):
+            if (event.type == COMPUTER_TURN) and (run == True) and (game_over == False):
                 computer_turn(board)
-                draw_board()
+                draw_game_board()
                 check_results(board,'computer')
 
 
@@ -296,20 +334,66 @@ def game():
         button_7.humanPressed(pos, BUTTON_7_X)
         button_8.humanPressed(pos, BUTTON_8_X)
         button_9.humanPressed(pos, BUTTON_9_X)
-        
-
-        
-
         if (pygame.mouse.get_pressed()[0] == 0): mouse_clicked = False 
-        print(board)
         
+
+
+        if game_over: 
+            GAP = 20
+            
+            # for gameOver_text
+            gameOverText_width  = gameOver_text.get_width()
+            gameOverText_height = gameOver_text.get_height()
+            gameOver_text_x = WIN_WIDTH/2  - gameOverText_width/2
+            gameOver_text_y = WIN_HEIGHT/2 - gameOverText_height/2 
+
+            yes_width  = yes_text.get_width()
+            no_width   = no_text.get_width()
+
+            LEFT_RIGHT_GAP = (gameOverText_width - (yes_width + GAP + no_width))/2 
+
+            # yes 
+            yes_x = gameOver_text_x + LEFT_RIGHT_GAP
+            yes_y = gameOver_text_y + gameOverText_height + GAP
+            yes_rect = yes_text.get_rect() 
+            yes_rect.topleft = (yes_x,yes_y)
+
+            # no 
+            no_x = gameOver_text_x + LEFT_RIGHT_GAP + yes_width + GAP 
+            no_y = gameOver_text_y + gameOverText_height + GAP 
+            no_rect = no_text.get_rect()
+            no_rect.topleft = (no_x, no_y)
+             
+
+            # EVENTS 
+            pos = pygame.mouse.get_pos() 
+            if (yes_rect.collidepoint(pos)) and (pygame.mouse.get_pressed()[0] == 1) and (mouse_clicked == False):
+                initiate_buttons()
+                game()
+
+
+            if (no_rect.collidepoint(pos)) and (pygame.mouse.get_pressed()[0] == 1) and (mouse_clicked == False):
+                mouse_clicked = True
+
+            
+            
+            WIN.fill(WHITE)
+            WIN.blit(gameOver_text, (gameOver_text_x,gameOver_text_y))
+            WIN.blit(yes_text, yes_rect.topleft)
+            WIN.blit(no_text, no_rect.topleft)
+            pygame.display.update()
+            continue 
+
+
         
-        draw_board()
+        draw_game_board()
+
+    
+
+if __name__ == '__main__':
+    game()
 
 
-
-
-game()
 
 
 
