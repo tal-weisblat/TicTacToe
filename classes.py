@@ -27,6 +27,10 @@ O_SIZE = 100
 FONT_X = pygame.font.SysFont('comicsans', X_SIZE)
 FONT_O = pygame.font.SysFont('comicsans', O_SIZE)
 
+
+
+# --------------------------------------- BUTTON --------------------------------------------
+
 class Button():
 
     def __init__(self,x,y):
@@ -61,4 +65,54 @@ class Button():
             x = self.button.x + BUTTON_WIDTH/2  - letter.get_width()/2
             y = self.button.y + BUTTON_HEIGHT/2 - letter.get_height()/2
             WIN.blit(letter, (x,y))
+
+
+
+
+
+# -------------------------------------- GAME-OVER ------------------------------------------
+class GameOver():
+
+    
+    def __init__(self, gameOver_text, yes_text, no_text, GAP=20): 
+
+        self.gameOver_text = gameOver_text
+        self.yes_text      = yes_text 
+        self.no_text       = no_text 
+
+        
+        # for gameOver_text
+        gameOverText_width  = self.gameOver_text.get_width()
+        gameOverText_height = self.gameOver_text.get_height()
+        self.gameOver_text_x = WIN_WIDTH/2  - gameOverText_width/2
+        self.gameOver_text_y = WIN_HEIGHT/2 - gameOverText_height/2 
+
+        yes_width  = self.yes_text.get_width()
+        no_width   = self.no_text.get_width()
+
+        LEFT_RIGHT_GAP = (gameOverText_width - (yes_width + GAP + no_width))/2 
+
+        # yes 
+        yes_x = self.gameOver_text_x + LEFT_RIGHT_GAP
+        yes_y = self.gameOver_text_y + gameOverText_height + GAP
+        self.yes_rect = self.yes_text.get_rect() 
+        self.yes_rect.topleft = (yes_x,yes_y)
+
+        # no 
+        no_x = self.gameOver_text_x + LEFT_RIGHT_GAP + yes_width + GAP 
+        no_y = self.gameOver_text_y + gameOverText_height + GAP 
+        self.no_rect = self.no_text.get_rect()
+        self.no_rect.topleft = (no_x, no_y)
+    
+
+    def draw(self):
+        WIN.fill(CHOCOLATE)
+        WIN.blit(self.gameOver_text, (self.gameOver_text_x,self.gameOver_text_y))
+        WIN.blit(self.yes_text, self.yes_rect.topleft)
+        WIN.blit(self.no_text,  self.no_rect.topleft)
+        pygame.display.update()
+
+
+    def YesNoButtonsFunctionality(self): 
+        return 
 

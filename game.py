@@ -5,9 +5,6 @@
 
 # TODO :
 # add AI-player
-# add a new/quit game gui at the end of a game 
-# add new FONTS for new/quit-game button + quistion 
-# create functionality for both Yes and No buttons
 # outline Yes and No buttons at the game-over screen while mouse-cursor hover above 
 # improve Tie option 
 
@@ -24,7 +21,8 @@ pygame.init()
 
 
 from classes import Button
-
+from classes import GameOver 
+from utility import check_results
 
 
 # COLORS 
@@ -102,6 +100,9 @@ button_7 = Button(button_7_x,button_789_y)
 button_8 = Button(button_8_x,button_789_y)
 button_9 = Button(button_9_x,button_789_y)
 
+# GAME-OVER 
+gameOver = GameOver(gameOver_text, yes_text, no_text)
+
 
 # EVENTS (two for each button)
 BUTTON_1_X = pygame.USEREVENT + 1
@@ -134,43 +135,6 @@ def draw_game_board():
     pygame.display.update()
 
 
-
-def check_results(board, player): 
-    if  (((board[0] == board[1] == board[2]) and (board[2] != '')) or\
-         ((board[3] == board[4] == board[5]) and (board[5] != '')) or\
-         ((board[6] == board[7] == board[8]) and (board[8] != ''))):
-            
-            if player == 'human'     : WIN_SOUND.play() 
-            elif player == 'computer': LOST_SOUND.play()
-            time.sleep(1)
-            pygame.event.post(pygame.event.Event(GAME_OVER))
-
-    elif ((board[0] == board[3] == board[6]) and (board[6] != '')) or\
-         ((board[1] == board[4] == board[7]) and (board[7] != '')) or\
-         ((board[2] == board[5] == board[8]) and (board[8] != '')):
-            
-            if player == 'human'   : WIN_SOUND.play() 
-            elif player == 'computer': LOST_SOUND.play() 
-            time.sleep(1)
-            pygame.event.post(pygame.event.Event(GAME_OVER))
-
-    elif ((board[0] == board[4] == board[8]) and (board[8] != '')) or\
-         ((board[2] == board[4] == board[6]) and (board[6] != '')):
-            
-            if player == 'human'   : WIN_SOUND.play() 
-            elif player == 'computer': LOST_SOUND.play()
-            time.sleep(1)
-            pygame.event.post(pygame.event.Event(GAME_OVER))
-
-    # TIE:
-    elif ( (board[0] != '') and (board[1] != '') and (board[2] != '') and
-           (board[3] != '') and (board[4] != '') and (board[5] != '') and
-           (board[6] != '') and (board[7] != '') and (board[8] != '')) :   
-            
-            print('TIE')
-            pygame.event.post(pygame.event.Event(GAME_OVER))
-
-    
 
 
 def computer_turn(board):
@@ -221,8 +185,6 @@ def game():
     clock = pygame.time.Clock()         
     game_over = False 
     run   = True 
-
-
 
     while run:
 
@@ -327,57 +289,10 @@ def game():
 
 
         if game_over: 
-            GAP = 20
-            
-            # for gameOver_text
-            gameOverText_width  = gameOver_text.get_width()
-            gameOverText_height = gameOver_text.get_height()
-            gameOver_text_x = WIN_WIDTH/2  - gameOverText_width/2
-            gameOver_text_y = WIN_HEIGHT/2 - gameOverText_height/2 
-
-            yes_width  = yes_text.get_width()
-            no_width   = no_text.get_width()
-
-            LEFT_RIGHT_GAP = (gameOverText_width - (yes_width + GAP + no_width))/2 
-
-            # yes 
-            yes_x = gameOver_text_x + LEFT_RIGHT_GAP
-            yes_y = gameOver_text_y + gameOverText_height + GAP
-            yes_rect = yes_text.get_rect() 
-            yes_rect.topleft = (yes_x,yes_y)
-
-            # no 
-            no_x = gameOver_text_x + LEFT_RIGHT_GAP + yes_width + GAP 
-            no_y = gameOver_text_y + gameOverText_height + GAP 
-            no_rect = no_text.get_rect()
-            no_rect.topleft = (no_x, no_y)
-             
-
-            # EVENTS 
-            pos = pygame.mouse.get_pos() 
-            if (yes_rect.collidepoint(pos)) and (pygame.mouse.get_pressed()[0] == 1) and (mouse_clicked == False):
-                initiate_buttons()
-                time.sleep(0.5)
-                game()
-                run = False     # for recursion purposes 
-                break
-            
-            if (no_rect.collidepoint(pos)) and (pygame.mouse.get_pressed()[0] == 1) and (mouse_clicked == False):
-                mouse_clicked = True
-                run = False 
-                break
-
-            
-            WIN.fill(CHOCOLATE)
-            WIN.blit(gameOver_text, (gameOver_text_x,gameOver_text_y))
-            WIN.blit(yes_text, yes_rect.topleft)
-            WIN.blit(no_text, no_rect.topleft)
-            
-            pygame.display.update()
-            continue 
+            gameOver.draw()
+            continue
 
 
-        
         draw_game_board()
 
     
