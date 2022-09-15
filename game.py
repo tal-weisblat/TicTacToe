@@ -8,7 +8,7 @@
 # outline Yes and No buttons at the game-over screen while mouse-cursor hover above 
 # improve Tie option 
 
-# BUG : restrict human-player from checking non-empty buttons (at this current version it's possible)
+# BUG : restrict human-player from click non-empty button (at this current version it's possible)
 
 
 
@@ -180,6 +180,7 @@ def initiate_buttons():
 
 def game():
     
+    new_game = False 
     mouse_clicked = False 
     board = ['','','','','','','','','']
     clock = pygame.time.Clock()         
@@ -274,22 +275,38 @@ def game():
 
             
         # BUTTON-ClICKED
-        pos = pygame.mouse.get_pos()
-        button_1.humanPressed(pos, BUTTON_1_X)
-        button_2.humanPressed(pos, BUTTON_2_X)
-        button_3.humanPressed(pos, BUTTON_3_X)
-        button_4.humanPressed(pos, BUTTON_4_X)
-        button_5.humanPressed(pos, BUTTON_5_X)
-        button_6.humanPressed(pos, BUTTON_6_X)
-        button_7.humanPressed(pos, BUTTON_7_X)
-        button_8.humanPressed(pos, BUTTON_8_X)
-        button_9.humanPressed(pos, BUTTON_9_X)
+        if not game_over:
+            pos = pygame.mouse.get_pos()
+            button_1.humanPressed(pos, BUTTON_1_X)
+            button_2.humanPressed(pos, BUTTON_2_X)
+            button_3.humanPressed(pos, BUTTON_3_X)
+            button_4.humanPressed(pos, BUTTON_4_X)
+            button_5.humanPressed(pos, BUTTON_5_X)
+            button_6.humanPressed(pos, BUTTON_6_X)
+            button_7.humanPressed(pos, BUTTON_7_X)
+            button_8.humanPressed(pos, BUTTON_8_X)
+            button_9.humanPressed(pos, BUTTON_9_X)
+            
+
+        # INIT MOUSE 
         if (pygame.mouse.get_pressed()[0] == 0): mouse_clicked = False 
-        
 
 
+        # GAME-OVER 
         if game_over: 
+
+            # GUI 
+            initiate_buttons()  
             gameOver.draw()
+            
+            # YES-NO 
+            pos = pygame.mouse.get_pos()
+            new_game = gameOver.NewGame(pos, mouse_clicked)
+            if new_game != 'not-decided': 
+                if new_game: 
+                    game()
+                    break   # for recursion purposes 
+                else: break
             continue
 
 

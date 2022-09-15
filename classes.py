@@ -1,6 +1,6 @@
 
 import pygame 
-
+import time 
 
 
 # WINDOW  
@@ -113,6 +113,22 @@ class GameOver():
         pygame.display.update()
 
 
-    def YesNoButtonsFunctionality(self): 
-        return 
+    def NewGame(self, pos, mouse_clicked): 
+        
+        
+        if (self.yes_rect.collidepoint(pos)) and (pygame.mouse.get_pressed()[0] == 1) and (mouse_clicked == False):
+            pygame.event.clear()   # clear all events from queue 
+            time.sleep(0.5)
+            new_game = True 
+            return (new_game)
+        
+        elif (self.no_rect.collidepoint(pos)) and (pygame.mouse.get_pressed()[0] == 1) and (mouse_clicked == False):
+            mouse_clicked = True
+            new_game = False 
+            return (new_game)
+        else:
+            return 'not-decided'
+
+            
+
 
