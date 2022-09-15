@@ -1,7 +1,7 @@
 
 import pygame 
 import time 
-
+import os 
 
 # WINDOW  
 WIN_WIDTH  = 400     
@@ -28,6 +28,7 @@ FONT_X = pygame.font.SysFont('comicsans', X_SIZE)
 FONT_O = pygame.font.SysFont('comicsans', O_SIZE)
 
 
+CLICK_SOUND = pygame.mixer.Sound(os.path.join('sounds', 'click_sound.mp3')) 
 
 # --------------------------------------- BUTTON --------------------------------------------
 
@@ -39,13 +40,18 @@ class Button():
         
         self.button = pygame.Rect(self.x,self.y, BUTTON_HEIGHT, BUTTON_WIDTH)
         
-        self.buttonSign = 'empty'  # 2 options ; 'X' or 'O'
+        self.buttonValue = 'empty'  # 2 options ; 'X' or 'O'
+
+
 
     def humanPressed(self,pos,event):
-        if (self.button.collidepoint(pos)) and (pygame.mouse.get_pressed()[0] == 1):
-             self.buttonSign = 'X'
-             pygame.event.post(pygame.event.Event(event))
-            
+        if (self.button.collidepoint(pos)) and (pygame.mouse.get_pressed()[0] == 1) and (self.buttonValue == 'empty'):
+            self.buttonValue = 'X'
+            CLICK_SOUND.play()
+            pygame.event.post(pygame.event.Event(event))
+
+
+
     def draw(self,pos):
         
         # empty cell 
@@ -56,12 +62,12 @@ class Button():
 
 
         # draw X or O (or none)
-        if self.buttonSign == 'X'  : 
+        if self.buttonValue == 'X'  : 
             letter = FONT_X.render('X', 100, BLACK) 
-        elif self.buttonSign == 'O': 
+        elif self.buttonValue == 'O': 
             letter = FONT_X.render('O', 100, BLACK) 
 
-        if (self.buttonSign == 'X') or (self.buttonSign == 'O'):
+        if (self.buttonValue == 'X') or (self.buttonValue == 'O'):
             x = self.button.x + BUTTON_WIDTH/2  - letter.get_width()/2
             y = self.button.y + BUTTON_HEIGHT/2 - letter.get_height()/2
             WIN.blit(letter, (x,y))

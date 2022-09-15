@@ -8,7 +8,7 @@
 # outline Yes and No buttons at the game-over screen while mouse-cursor hover above 
 # improve Tie option 
 
-# BUG : restrict human-player from click non-empty button (at this current version it's possible)
+
 
 
 
@@ -58,12 +58,9 @@ yes_text      = YES_NO_FONT.render('Yes', 1, BLACK)
 no_text       = YES_NO_FONT.render('No',1, BLACK)    
 
 
-
 # SOUNDS 
 pygame.mixer.music.load(os.path.join('sounds', 'background_music.mp3'))    
 pygame.mixer.music.play()
-WIN_SOUND   = pygame.mixer.Sound(os.path.join('sounds', 'win_sound.wav'))
-LOST_SOUND  = pygame.mixer.Sound(os.path.join('sounds', 'lost_sound.wav'))
 CLICK_SOUND = pygame.mixer.Sound(os.path.join('sounds', 'click_sound.mp3')) 
 
 
@@ -149,29 +146,29 @@ def computer_turn(board):
     board[i] = 'O' 
 
     # address gui (with computer choice)
-    if i == 0: button_1.buttonSign = 'O'
-    if i == 1: button_2.buttonSign = 'O'
-    if i == 2: button_3.buttonSign = 'O'
-    if i == 3: button_4.buttonSign = 'O'
-    if i == 4: button_5.buttonSign = 'O'
-    if i == 5: button_6.buttonSign = 'O'
-    if i == 6: button_7.buttonSign = 'O'
-    if i == 7: button_8.buttonSign = 'O'
-    if i == 8: button_9.buttonSign = 'O'
+    if i == 0: button_1.buttonValue = 'O'
+    if i == 1: button_2.buttonValue = 'O'
+    if i == 2: button_3.buttonValue = 'O'
+    if i == 3: button_4.buttonValue = 'O'
+    if i == 4: button_5.buttonValue = 'O'
+    if i == 5: button_6.buttonValue = 'O'
+    if i == 6: button_7.buttonValue = 'O'
+    if i == 7: button_8.buttonValue = 'O'
+    if i == 8: button_9.buttonValue = 'O'
     
     
-
 
 def initiate_buttons():
-    button_1.buttonSign = None
-    button_2.buttonSign = None
-    button_3.buttonSign = None
-    button_4.buttonSign = None
-    button_5.buttonSign = None
-    button_6.buttonSign = None
-    button_7.buttonSign = None
-    button_8.buttonSign = None
-    button_9.buttonSign = None
+    button_1.buttonValue = 'empty'
+    button_2.buttonValue = 'empty'
+    button_3.buttonValue = 'empty'
+    button_4.buttonValue = 'empty'
+    button_5.buttonValue = 'empty'
+    button_6.buttonValue = 'empty'
+    button_7.buttonValue = 'empty'
+    button_8.buttonValue = 'empty'
+    button_9.buttonValue = 'empty'
+
 
 
 
@@ -199,79 +196,68 @@ def game():
             # QUIT-GAME
             if event.type == pygame.QUIT: run = False   
 
-
-            # COMPUTER-TURN 
+            # COMPUTER
             if (event.type == COMPUTER_TURN) and (run == True) and (game_over == False):
                 computer_turn(board)
                 draw_game_board()
                 check_results(board,'computer')
 
-
-            # HUMAN-CLICKED-BUTTONS 
+            # HUMAN
             if (event.type == BUTTON_1_X) and (mouse_clicked == False):
-                
-                print('button_1 pressed')
-                CLICK_SOUND.play()
                 mouse_clicked = True
                 board[0] = 'X'
                 check_results(board,'human')
                 pygame.event.post(pygame.event.Event(COMPUTER_TURN))
                 
             if (event.type == BUTTON_2_X) and (mouse_clicked == False):  
-                CLICK_SOUND.play()
                 mouse_clicked = True
                 board[1] = 'X'
                 check_results(board,'human')
                 pygame.event.post(pygame.event.Event(COMPUTER_TURN))
 
             if (event.type == BUTTON_3_X) and (mouse_clicked == False): 
-                CLICK_SOUND.play()
                 mouse_clicked = True
                 board[2] = 'X'
                 check_results(board,'human')
                 pygame.event.post(pygame.event.Event(COMPUTER_TURN))
 
             if (event.type == BUTTON_4_X) and (mouse_clicked == False): 
-                CLICK_SOUND.play()
                 mouse_clicked = True
                 board[3] = 'X'
                 check_results(board,'human')
                 pygame.event.post(pygame.event.Event(COMPUTER_TURN))
 
             if (event.type == BUTTON_5_X) and (mouse_clicked == False): 
-                CLICK_SOUND.play()
                 mouse_clicked = True
                 board[4] = 'X'
                 check_results(board,'human')
                 pygame.event.post(pygame.event.Event(COMPUTER_TURN))
 
             if (event.type == BUTTON_6_X) and (mouse_clicked == False): 
-                CLICK_SOUND.play()
                 mouse_clicked = True
                 board[5] = 'X'
                 check_results(board,'human')
                 pygame.event.post(pygame.event.Event(COMPUTER_TURN))
 
             if (event.type == BUTTON_7_X) and (mouse_clicked == False): 
-                CLICK_SOUND.play()
                 mouse_clicked = True
                 board[6] = 'X'
                 check_results(board,'human')
                 pygame.event.post(pygame.event.Event(COMPUTER_TURN))
 
             if (event.type == BUTTON_8_X) and (mouse_clicked == False): 
-                CLICK_SOUND.play()
                 mouse_clicked = True
                 board[7] = 'X'
                 check_results(board,'human')
                 pygame.event.post(pygame.event.Event(COMPUTER_TURN))
 
             if (event.type == BUTTON_9_X) and (mouse_clicked == False): 
-                CLICK_SOUND.play()
+                
                 mouse_clicked = True
                 board[8] = 'X'
                 check_results(board,'human')
                 pygame.event.post(pygame.event.Event(COMPUTER_TURN))
+
 
             
         # BUTTON-ClICKED
@@ -287,7 +273,6 @@ def game():
             button_8.humanPressed(pos, BUTTON_8_X)
             button_9.humanPressed(pos, BUTTON_9_X)
             
-
         # INIT MOUSE 
         if (pygame.mouse.get_pressed()[0] == 0): mouse_clicked = False 
 
