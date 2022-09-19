@@ -1,18 +1,4 @@
 
-
-
-
-
-# TODO :
-# add AI-player
-# outline Yes and No buttons at the game-over screen while mouse-cursor hover above 
-# improve Tie option 
-
-
-
-
-
-
 import pygame 
 import os 
 import random
